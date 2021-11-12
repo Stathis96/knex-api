@@ -3,14 +3,14 @@ import { User } from "src/types/entities/User";
 import { Task } from "src/types/entities/Task";
 import { UserInputData } from 'src/types/classes/UserInputData'
 import { v4 } from 'uuid';
- 
+import { UserInputError } from 'apollo-server-errors';
 
 export async function getUsersAction(connection: Knex): Promise<User[]>{
   const users = await connection('users')
   const tasks = await connection('tasks')
 
   const populatedUsers = users.map(user => {
-    const userTasks = tasks.filter(task => task.user === user.id) as Task[]
+    const userTasks = tasks.filter(task => task.user === user.id) as unknown as Task[]
     return {
       ...user,
        tasks: userTasks
@@ -19,10 +19,21 @@ export async function getUsersAction(connection: Knex): Promise<User[]>{
   return populatedUsers
 }
 
+
 export async function getUserAction(id: string, connection: Knex): Promise<User>{
   const user = await connection('users').where('id', id).first()
 
-  const userTask = await connection('tasks').where('user', user.id) as Task[]
+  if (user === undefined) throw new UserInputError('INVALID_USER_ID')
+
+  const userTask = await connection('tasks').where('user', user.id) as unknown as Task[]
+
+  // const result: User = {
+  //   ...user,
+  //   tasks: userTask.map(t => {
+  //     console.log(t.id);
+  //     return { ...t }
+  //   })
+  // }
 
   const result: User = {
     ...user,
@@ -33,7 +44,13 @@ export async function getUserAction(id: string, connection: Knex): Promise<User>
 }
 
 export async function createUserAction(data: UserInputData, connection: Knex): Promise<boolean>{
-  const user = await connection('users').insert({id: v4(),fullname: data.fullname, email: data.email})
+  const user = await connection('users')
+    .insert({
+      id: v4(),
+      fullname: data.fullname, 
+      email: data.email
+    })
+    
   if (user) return true
   return false
 }

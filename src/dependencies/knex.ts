@@ -1,4 +1,6 @@
 import knex from 'knex'
+import { TaskRow } from 'src/types/interfaces/Rows/TaskRow'
+import { UserRow } from 'src/types/interfaces/Rows/UserRow'
 
 export const connection = knex({
   client: 'mysql',
@@ -13,3 +15,12 @@ export const connection = knex({
     extension: 'ts'
   }
 })
+
+declare module 'knex/types/tables' {
+  interface Tables {
+    users: UserRow
+    tasks: TaskRow
+  }
+}
+
+
