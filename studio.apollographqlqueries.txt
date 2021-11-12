@@ -1,0 +1,53 @@
+{
+  getAllUsers {
+    fullname
+    email
+    tasks {
+      taskname
+    }
+  }
+}
+
+{
+  getUser(id:"c84dbec4-ad34-4eef-a9b7-8d43bafe8ae6"){
+    fullname
+    email
+    tasks {
+      taskname
+    }
+  }
+}
+
+mutation{
+  createUser(data: {fullname: "NeoS XristiS", email: "email@email.com"})
+}
+
+mutation {
+  updateUser(id:"bdecb53b-184a-411d-a80a-109ed9d664ca",data:{fullname:"Updated Name", email: "updatedemail@email.com"})
+}
+
+mutation{
+  deleteUser(id:"bdecb53b-184a-411d-a80a-109ed9d664ca")
+}
+
+{
+  getAllTasks {
+    id
+    taskname
+    user {
+      fullname
+    }
+  }
+}
+
+mutation {
+  createTask(id:"b9f06935-dafa-49e6-ab66-24753d52396c",data: {taskname: "NeoTaskCreated"})
+}
+
+mutation {
+  updateTask(id:"b92442f7-7fc4-49c3-951c-a0076ad18ad8", data :{taskname: "UpdatedTaskName"})
+}
+
+mutation {
+  deleteTask(id: "b92442f7-7fc4-49c3-951c-a0076ad18ad8")
+}
